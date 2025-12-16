@@ -38,16 +38,52 @@
 <body id="top">
 <header class="bg-light">
 <nav class="navbar navbar-expand-lg navbar-light bg-light" id="header-nav" role="navigation">
-<button aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#navbarSupportedContent" data-bs-toggle="collapse" type="button"><span class="navbar-toggler-icon"></span></button>
-<div class="collapse navbar-collapse" id="navbarSupportedContent">
-<ul class="navbar-nav ms-auto me-2">
-<li class="nav-item"><a class="nav-link" data-i18n="nav.about" href="#about">About</a></li>
-<li class="nav-item"><a class="nav-link" data-i18n="nav.skills" href="#skills">Skills</a></li>
-<li class="nav-item"><a class="nav-link" data-i18n="nav.courses" href="#portfolio">Courses-Certifications</a></li>
-<li class="nav-item"><a class="nav-link" data-i18n="nav.posts" href="#Posts">Posts</a></li>
-<li class="nav-item d-flex align-items-center ms-3"><div aria-label="Language switch" class="btn-group btn-group-sm" role="group"><button class="btn btn-outline-secondary active" data-lang="en" type="button">English</button><button class="btn btn-outline-secondary" data-lang="es" type="button">Español</button></div></li></ul>
-</div>
+  <div class="container-fluid">
+
+    <!-- Language switch (IZQUIERDA) -->
+    <div class="btn-group btn-group-sm" role="group" aria-label="Language switch">
+      <button class="btn btn-outline-secondary active" data-lang="en" type="button">
+        English
+      </button>
+      <button class="btn btn-outline-secondary" data-lang="es" type="button">
+        Español
+      </button>
+    </div>
+
+    <!-- Toggle mobile -->
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Menu (DERECHA) -->
+    <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+      <ul class="navbar-nav ms-auto me-2">
+        <li class="nav-item">
+          <a class="nav-link" data-i18n="nav.about" href="#about">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-i18n="nav.skills" href="#skills">Skills</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-i18n="nav.courses" href="#portfolio">Courses-Certifications</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-i18n="nav.posts" href="#Posts">Posts</a>
+        </li>
+      </ul>
+    </div>
+
+  </div>
 </nav>
+
 </header>
 <div class="page-content">
 <div id="content">
