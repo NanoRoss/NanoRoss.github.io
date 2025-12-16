@@ -112,7 +112,7 @@
       "about.p1": "Soy Mariano Panella y soy un 🎓 Ingeniero en Sistemas con más de 10 años de experiencia profesional, orientado a 🧪 Quality Assurance, asegurando calidad tanto en procesos como en productos (QA/QC) a lo largo de las distintas etapas y metodologías del SDLC.",
       "about.p2": "He trabajado tanto en pruebas 🖐️ manuales como 🤖 automatizadas. Soy proactivo, curioso y con ganas de aprender nuevas metodologías y tecnologías.",
       "about.p3": "Tengo experiencia en muchos tipos de empresas, como 🌾 agroindustria, 🌐 empresas multinacionales de software, 💳 fintech, 🏦 banca, 🎁 plataformas de lealtad y recompensas, y más.",
-      "about.p4": "Mis experiencias laborales más recientes incluyen Neoris 🇦🇷, Accenture 🇦🇷, Keep It Simple 🇦🇷, Agrofy 🇦🇷, Naranja X 🇦🇷, Banco Ripley 🇨🇱, RW 🇺🇸.",
+      "about.p4": "Mis experiencias laborales más recientes incluyen Neoris 🇦🇷, Accenture 🇦🇷, Keep It Simple 🇦🇷, Agrofy 🇦🇷, Naranja X 🇦🇷, Banco Ripley 🇨🇱, Rewardsweb 🇺🇸, Keep It Simple 🇦🇷.",
 
       "skills.core_desc": "Aprendo rápido y me especializo en una amplia variedad de habilidades requeridas para QA Engineer y automatización",
 
@@ -120,6 +120,8 @@
       "skills.card1.desc": "Fuerte experiencia testeando FrontEnd y BackEnd",
       "skills.card2.title": "Análisis funcional",
       "skills.card2.desc": "Análisis de requerimientos funcionales y técnicos",
+      "skills.card2b.title": "IA",
+      "skills.card2b.desc": "Manejo eficiente y responsable de IA",
       "skills.card3.title": "Shift Left Testing",
       "skills.card3.desc": "Mentalidad de testeo temprano dentro del SDLC",
       "skills.card4.title": "Liderazgo y coaching",
