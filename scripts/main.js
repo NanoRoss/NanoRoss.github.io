@@ -2,14 +2,6 @@
   "use strict";
 
   window.addEventListener('load', () => {
-    on_page_load()
-  });
-
-  /**
-   * Function gets called when page is loaded.
-   */
-  function on_page_load() {
-    // Initialize On-scroll Animations
     AOS.init({
       anchorPlacement: 'top-left',
       duration: 600,
@@ -18,86 +10,57 @@
       mirror: false,
       disable: 'mobile'
     });
-  }
+  });
 
-  /**
-   * Navbar effects and scrolltop buttons upon scrolling
-   */
-  const navbar = document.getElementById('header-nav')
-  var body = document.getElementsByTagName("body")[0]
-  const scrollTop = document.getElementById('scrolltop')
+  // Navbar scroll effects and scroll-to-top button
+  const navbar = document.getElementById('header-nav');
+  const body = document.getElementsByTagName("body")[0];
+  const scrollTop = document.getElementById('scrolltop');
   window.onscroll = () => {
     if (window.scrollY > 0) {
-      navbar.classList.add('fixed-top', 'shadow-sm')
-      body.style.paddingTop = navbar.offsetHeight + "px"
+      navbar.classList.add('fixed-top', 'shadow-sm');
+      body.style.paddingTop = navbar.offsetHeight + "px";
       scrollTop.style.visibility = "visible";
       scrollTop.style.opacity = 1;
     } else {
-      navbar.classList.remove('fixed-top', 'shadow-sm')
-      body.style.paddingTop = "0px"
+      navbar.classList.remove('fixed-top', 'shadow-sm');
+      body.style.paddingTop = "0px";
       scrollTop.style.visibility = "hidden";
       scrollTop.style.opacity = 0;
     }
   };
 
-  /**
-   * Masonry Grid
-   */
-  var elem = document.querySelector('.grid');
-  if(elem) {
-    imagesLoaded(elem, function() {
-      new Masonry(elem, {
-        itemSelector: '.grid-item',
-        percentPosition: true,
-        horizontalOrder: true
-      });
-    })
+  // Dark mode toggle
+  const themeToggle = document.getElementById('theme-toggle');
+  const themeIcon = document.getElementById('theme-icon');
+  const html = document.documentElement;
+
+  function setTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    if (themeIcon) {
+      themeIcon.className = theme === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
+    }
+    try { localStorage.setItem('siteTheme', theme); } catch(e) {}
   }
 
-  /**
-   * Big Picture Popup for images and videos
-   */
-   document.querySelectorAll("[data-bigpicture]").forEach((function(e) {
-     e.addEventListener("click", (function(t){
-       t.preventDefault();
-       const data =JSON.parse(e.dataset.bigpicture)
-       BigPicture({
-        el: t.target,
-        ...data
-      })
-     })
-    )
-  }))
+  function initTheme() {
+    const current = html.getAttribute('data-theme');
+    if (themeIcon) {
+      themeIcon.className = current === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
+    }
+  }
 
-  /**
-   * Big Picture Popup for Photo Gallary
-   */
-   document.querySelectorAll(".bp-gallery a").forEach((function(e) {
-    var caption = e.querySelector('figcaption')
-    var img = e.querySelector('img')
-    // set the link present on the item to the caption in full view
-    img.dataset.caption = '<a class="link-light" target="_blank" href="' + e.href + '">' + caption.innerHTML + '</a>';
-    window.console.log(caption, img)
-     e.addEventListener("click", (function(t){
-       t.preventDefault();
-       BigPicture({
-        el: t.target,
-        gallery: '.bp-gallery',
-      })
-     })
-    )
-  }))
+  if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+      const current = html.getAttribute('data-theme');
+      setTheme(current === 'dark' ? 'light' : 'dark');
+    });
+  }
 
-  // Add your javascript here
 
-  /**
-   * Simple i18n (EN/ES) - keeps English as default and only replaces text when switching to Spanish.
-   */
-    /**
-   * Simple i18n (EN/ES)
-   * - English is the "original HTML": we never replace it with an EN dictionary.
-   * - Spanish replaces only the keys we define below.
-   */
+  initTheme();
+
+  // i18n (EN/ES)
   const I18N = {
     es: {
       "nav.about": "Acerca de",
@@ -142,6 +105,7 @@
       "skills.card15.title": "CI/CD",
       "skills.card15.desc": "Armado de CI para frameworks con GitHub Actions o Jenkins",
 
+      "section.skills": "Habilidades principales",
       "section.courses": "Cursos y Certificaciones",
       "section.posts": "Publicaciones",
 
@@ -160,7 +124,6 @@
 
   function applyLanguage(lang) {
     captureEnglishOriginals();
-
     document.documentElement.lang = lang === "es" ? "es-AR" : "en-US";
 
     document.querySelectorAll("[data-i18n]").forEach((el) => {
@@ -177,7 +140,7 @@
       btn.classList.toggle("active", btn.getAttribute("data-lang") === lang);
     });
 
-    try { localStorage.setItem("siteLang", lang); } catch (e) {}
+    try { localStorage.setItem("siteLang", lang); } catch(e) {}
   }
 
   window.addEventListener("DOMContentLoaded", () => {
@@ -188,9 +151,8 @@
     });
 
     let saved = "en";
-    try { saved = localStorage.getItem("siteLang") || "en"; } catch (e) {}
+    try { saved = localStorage.getItem("siteLang") || "en"; } catch(e) {}
     applyLanguage(saved === "es" ? "es" : "en");
   });
-
 
 })();

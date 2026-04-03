@@ -1,6 +1,4 @@
 <!DOCTYPE html>
-
-<!-- upto 2 directory depth-->
 <html lang="en-US">
 <head>
 <!-- Google tag (gtag.js) -->
@@ -10,6 +8,14 @@
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-JTVSLCT677');
+</script>
+<script>
+  (function() {
+    try {
+      var t = localStorage.getItem('siteTheme') || 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    } catch(e) {}
+  })();
 </script>
 <meta charset="utf-8"/>
 <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
@@ -40,17 +46,16 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light" id="header-nav" role="navigation">
   <div class="container-fluid">
 
-    <!-- Language switch (IZQUIERDA) -->
-    <div class="btn-group btn-group-sm" role="group" aria-label="Language switch">
-      <button class="btn btn-outline-secondary active" data-lang="en" type="button">
-        English
-      </button>
-      <button class="btn btn-outline-secondary" data-lang="es" type="button">
-        Español
+    <div class="d-flex align-items-center gap-2">
+      <div class="btn-group btn-group-sm" role="group" aria-label="Language switch">
+        <button class="btn btn-outline-secondary active" data-lang="en" type="button">English</button>
+        <button class="btn btn-outline-secondary" data-lang="es" type="button">Español</button>
+      </div>
+      <button id="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+        <i class="bi bi-moon-fill" id="theme-icon"></i>
       </button>
     </div>
 
-    <!-- Toggle mobile -->
     <button
       class="navbar-toggler"
       type="button"
@@ -63,7 +68,6 @@
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <!-- Menu (DERECHA) -->
     <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
       <ul class="navbar-nav ms-auto me-2">
         <li class="nav-item">
@@ -95,7 +99,7 @@
 <div class="col-lg-6">
 <div class="mt-5">
 <p class="lead text-uppercase mb-1" data-i18n="hero.hello">Hello!</p>
-<h1 class="intro-title marker" data-aos="fade-left" data-aos-delay="50" data-i18n="hero.name">I’m Mariano Panella</h1>
+<h1 class="intro-title marker" data-aos="fade-left" data-aos-delay="50" data-i18n="hero.name">I'm Mariano Panella</h1>
 <p class="lead fw-normal mt-3" data-aos="fade-up" data-aos-delay="100">Test Automation Engineer, QA Engineer, SDET</p>
 <div class="social-nav" data-aos="fade-up" data-aos-delay="200">
 <nav role="navigation">
@@ -114,17 +118,17 @@
 <div class="col-md-6">
 <h2 class="h4 my-2" data-i18n="section.about">A little bit of me!</h2>
 <p data-i18n="about.p1">
-I am Mariano Panella and I am a 🎓 Systems Engineer with more than 10 years of professional experience, oriented to 🧪 Quality Assurance,  ensuring quality in both processes and products (QA/QC) throughout the different stages and methodologies of the SDLC.  
+I am Mariano Panella and I am a 🎓 Systems Engineer with more than 10 years of professional experience, oriented to 🧪 Quality Assurance,  ensuring quality in both processes and products (QA/QC) throughout the different stages and methodologies of the SDLC.
 </p>
 <p data-i18n="about.p2">
-I have worked on both 🖐️ manual and 🤖 automation testing. I’m proactive, curious, and eager to learn new methodologies and technologies.  
+I have worked on both 🖐️ manual and 🤖 automation testing. I'm proactive, curious, and eager to learn new methodologies and technologies.
 </p>
 <p data-i18n="about.p3">
 I have experience in many types of companies, such as 🌾 Agroindustry, 🌐 multinational software companies, 💳 fintech, 🏦 banking, 🎁 loyalty and rewards platforms, and more.
 </p>
 <p data-i18n="about.p4">My most recent work experiences include Neoris 🇦🇷, Accenture 🇦🇷, Keep It Simple 🇦🇷, Agrofy 🇦🇷, Naranja X 🇦🇷, Banco Ripley 🇨🇱, Rewardsweb 🇺🇸, Keep It Simple 🇦🇷.</p>
 <br/>
-          • ISTQB-CTFL 2018 Certified.<br/>                                                                                                                                                
+          • ISTQB-CTFL 2018 Certified.<br/>
           • Scrum Foundations Professional SFPC Certified.<br/>
           • Developing Secure Software Certified.<br/>
 <div class="row mt-3">
@@ -148,11 +152,9 @@ I have experience in many types of companies, such as 🌾 Agroindustry, 🌐 mu
 </div>
 </div>
 </div>
-<div class="col-md-5 offset-md-1" data-aos="fade-left" data-aos-delay="100"><img alt="Walter Patterson" class="avatar img-fluid mt-2" height="400" src="images/avatar.jpg" width="400"/></div>
+<div class="col-md-5 offset-md-1" data-aos="fade-left" data-aos-delay="100"><img alt="Mariano Panella" class="avatar img-fluid mt-2" height="400" src="images/avatar.jpg" width="400"/></div>
 </div>
 </div>
-</div>
-<div class="section px-3 px-lg-4 pt-5" id="services">
 </div>
 <div class="section px-3 px-lg-4 pt-5" id="skills">
 <div class="container-narrow">
@@ -162,36 +164,6 @@ I have experience in many types of companies, such as 🌾 Agroindustry, 🌐 mu
 <div class="text-center">
 <p class="mx-auto mb-3" data-i18n="skills.core_desc" style="max-width:600px">I am a quick learner and specialize in a diverse array of skills required for QA Engineer and Automation</p>
 </div>
-<style>
-      .card-text {
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          transition: all 0.3s ease;
-      }
-  
-      .card:hover .card-text {
-          white-space: normal;
-          overflow: visible;
-      }
-  </style>
-<style>
-    .card-text {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        transition: all 0.3s ease;
-    }
-
-    .card:hover .card-text {
-        white-space: normal;
-        overflow: visible;
-        background-color: black; /* Fondo negro al hacer hover */
-        color: white; /* Texto blanco al hacer hover */
-        padding: 5px; /* Ajustar el padding para mayor legibilidad */
-        border-radius: 5px; /* Agregar bordes redondeados */
-    }
-</style>
 <div class="bg-light p-3">
 <div class="row">
 <div class="col-md-3">
@@ -282,7 +254,6 @@ I have experience in many types of companies, such as 🌾 Agroindustry, 🌐 mu
 </div>
 </div>
 </div>
-<!-- Repite esta estructura para agregar más habilidades -->
 <div class="col-md-3">
 <div class="card mb-3 text-center" style="height: 150px;">
 <div class="card-body d-flex flex-column justify-content-center">
@@ -291,7 +262,6 @@ I have experience in many types of companies, such as 🌾 Agroindustry, 🌐 mu
 </div>
 </div>
 </div>
-<!-- Repite esta estructura para agregar más habilidades -->
 <div class="col-md-3">
 <div class="card mb-3 text-center" style="height: 150px;">
 <div class="card-body d-flex flex-column justify-content-center">
@@ -300,16 +270,14 @@ I have experience in many types of companies, such as 🌾 Agroindustry, 🌐 mu
 </div>
 </div>
 </div>
-<!-- Repite esta estructura para agregar más habilidades -->
 <div class="col-md-3">
 <div class="card mb-3 text-center" style="height: 150px;">
 <div class="card-body d-flex flex-column justify-content-center">
-<h5 class="card-title" data-i18n="skills.card13.title">Playwrigth</h5>
-<p class="card-text" data-i18n="skills.card13.desc">Building frameworks from scratch with Playwrigth </p>
+<h5 class="card-title" data-i18n="skills.card13.title">Playwright</h5>
+<p class="card-text" data-i18n="skills.card13.desc">Building frameworks from scratch with Playwright</p>
 </div>
 </div>
 </div>
-<!-- Repite esta estructura para agregar más habilidades -->
 <div class="col-md-3">
 <div class="card mb-3 text-center" style="height: 150px;">
 <div class="card-body d-flex flex-column justify-content-center">
@@ -318,7 +286,6 @@ I have experience in many types of companies, such as 🌾 Agroindustry, 🌐 mu
 </div>
 </div>
 </div>
-<!-- Repite esta estructura para agregar más habilidades -->
 <div class="col-md-3">
 <div class="card mb-3 text-center" style="height: 150px;">
 <div class="card-body d-flex flex-column justify-content-center">
@@ -331,31 +298,6 @@ I have experience in many types of companies, such as 🌾 Agroindustry, 🌐 mu
 </div>
 </div>
 </div>
-<style>
-  .course-list {
-    list-style: none;
-    padding: 0;
-  }
-
-  .course-item {
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 15px;
-    margin-bottom: 15px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-
-  .course-item h3 {
-    font-size: 18px;
-    margin-bottom: 5px;
-  }
-
-  .course-item p {
-    font-size: 14px;
-    color: #666;
-    margin: 0;
-  }
-</style>
 <div class="section px-2 px-lg-4 pt-5" id="portfolio">
 <div class="container">
 <div class="text-center mb-5">
@@ -434,13 +376,13 @@ I have experience in many types of companies, such as 🌾 Agroindustry, 🌐 mu
 <br/>
 </div>
 <a href="https://medium.com/@Mariano../construyendo-un-pipeline-para-automation-testing-con-github-actions-en-simples-pasos-39263656c767" title="Construyendo un Pipeline para Automation Testing con Github Actions en simples pasos.">
-<img alt="" class="avatar img-fluid mt-2" height="400" src="images/mmm.png" width="400"/>
+<img alt="Artículo: Construyendo un Pipeline para Automation Testing con Github Actions" class="avatar img-fluid mt-2" height="400" src="images/mmm.png" width="400"/>
 </a>
 <a href="https://www.youtube.com/@automatizandoando" title="Abriendo mi primer canal de Youtube!">
-<img alt="" class="avatar img-fluid mt-2" height="400" src="images/aaa.png" width="400"/>
+<img alt="Canal de YouTube: automatizandoando" class="avatar img-fluid mt-2" height="400" src="images/aaa.png" width="400"/>
 </a>
 <a href="https://medium.com/@Mariano../piloto-autom%C3%A1tico-768cee3ec5f9" title="La IA no asume responsabilidad. Vos sí.">
-<img alt="" class="avatar img-fluid mt-2" height="400" src="images/mmmia.png" width="400"/>
+<img alt="Artículo: La IA no asume responsabilidad. Vos sí." class="avatar img-fluid mt-2" height="400" src="images/mmmia.png" width="400"/>
 </a>
 </div>
 <br/>
@@ -465,11 +407,7 @@ I have experience in many types of companies, such as 🌾 Agroindustry, 🌐 mu
 </div>
 </div></footer></div>
 <div id="scrolltop"><a class="btn btn-secondary" href="#top"><span class="icon"><i class="fas fa-angle-up fa-x"></i></span></a></div>
-<script src="./scripts/imagesloaded.pkgd.min.js?ver=1.2.0"></script>
-<script src="./scripts/masonry.pkgd.min.js?ver=1.2.0"></script>
-<script src="./scripts/BigPicture.min.js?ver=1.2.0"></script>
-<script src="./scripts/purecounter.min.js?ver=1.2.0"></script>
-<script src="./scripts/bootstrap.bundle.min.js?ver=1.2."></script>
+<script src="./scripts/bootstrap.bundle.min.js?ver=1.2.0"></script>
 <script src="./scripts/aos.min.js?ver=1.2.0"></script>
 <script src="./scripts/main.js?ver=1.2.0"></script>
 </body>
