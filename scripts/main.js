@@ -63,6 +63,7 @@
   // i18n (EN/ES)
   const I18N = {
     es: {
+      "nav.lab": "Laboratorio",
       "nav.about": "Acerca de",
       "nav.skills": "Habilidades",
       "nav.courses": "Cursos y Certificaciones",

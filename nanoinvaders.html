@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>NanoInvaders – QA vs Bugs</title>
+<link rel="icon" href="favicon.ico"/>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #050510;
+    color: #e0e0ff;
+    font-family: 'Press Start 2P', monospace;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  .top-nav {
+    width: 100%;
+    background: #0a0a20;
+    border-bottom: 2px solid #7c3aed;
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    padding: 0.65rem 1.5rem;
+  }
+
+  .top-nav a {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.55rem;
+    color: #a78bfa;
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    transition: color 0.15s;
+  }
+
+  .top-nav a:hover { color: #fff; }
+
+
+  /* LOGO */
+  .game-header {
+    margin: 1.2rem 0 0.4rem;
+    text-align: center;
+    user-select: none;
+  }
+
+  .pixel-logo {
+    font-size: clamp(1rem, 4vw, 2rem);
+    color: #a78bfa;
+    text-shadow: 3px 3px 0 #5b21b6, 6px 6px 0 #3b1f7a, 0 0 20px rgba(167,139,250,0.6);
+    letter-spacing: 0.08em;
+  }
+
+  .pixel-logo span { color: #22d3ee; text-shadow: 3px 3px 0 #0e7490, 0 0 20px rgba(34,211,238,0.5); }
+
+  .tagline {
+    font-size: 0.4rem;
+    color: #6b7280;
+    margin-top: 0.35rem;
+    letter-spacing: 0.12em;
+  }
+
+  /* HUD */
+  .hud {
+    display: flex;
+    justify-content: space-between;
+    width: min(600px, 96vw);
+    margin: 0.5rem auto 0.25rem;
+    font-size: 0.5rem;
+    color: #a78bfa;
+    letter-spacing: 0.04em;
+  }
+
+  /* CANVAS */
+  #gameCanvas {
+    display: block;
+    background: #050510;
+    border: 2px solid #7c3aed;
+    box-shadow: 0 0 30px rgba(124,58,237,0.4), inset 0 0 60px rgba(124,58,237,0.05);
+    image-rendering: pixelated;
+    width: min(600px, 96vw);
+    height: auto;
+    cursor: none;
+  }
+
+  .canvas-wrap {
+    position: relative;
+    width: min(600px, 96vw);
+  }
+
+  /* SCANLINES */
+  .canvas-wrap::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(to bottom, transparent 0px, transparent 3px, rgba(0,0,0,0.1) 3px, rgba(0,0,0,0.1) 4px);
+    pointer-events: none;
+  }
+
+  /* OVERLAY */
+  .overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(5,5,16,0.92);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    z-index: 10;
+    padding: 1rem;
+  }
+
+  .overlay h2 {
+    font-size: clamp(0.75rem, 2.5vw, 1.3rem);
+    color: #a78bfa;
+    text-shadow: 3px 3px 0 #5b21b6, 0 0 20px rgba(167,139,250,0.6);
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  .overlay p {
+    font-size: clamp(0.38rem, 1.1vw, 0.55rem);
+    color: #9ca3af;
+    text-align: center;
+    line-height: 2.2;
+  }
+
+  /* NAME INPUT */
+  .name-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .name-label {
+    font-size: 0.42rem;
+    color: #6b7280;
+    letter-spacing: 0.1em;
+  }
+
+  .name-input {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.6rem;
+    background: #0f0a20;
+    color: #22d3ee;
+    border: 2px solid #7c3aed;
+    padding: 0.4rem 0.8rem;
+    text-align: center;
+    outline: none;
+    letter-spacing: 0.08em;
+    width: 180px;
+  }
+
+  .name-input:focus { border-color: #a78bfa; }
+  .name-input::placeholder { color: #2d1f50; }
+
+  /* LEADERBOARD */
+  .lb-wrap {
+    width: 100%;
+    max-width: 340px;
+  }
+
+  .lb-title {
+    font-size: 0.42rem;
+    color: #22d3ee;
+    text-align: center;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.4rem;
+  }
+
+  .lb-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.38rem;
+    color: #9ca3af;
+  }
+
+  .lb-table th {
+    color: #a78bfa;
+    padding: 0.15rem 0.4rem;
+    text-align: left;
+    border-bottom: 1px solid #2d1f50;
+    letter-spacing: 0.05em;
+  }
+
+  .lb-table td { padding: 0.15rem 0.4rem; }
+  .lb-table tr.current-run td { color: #22d3ee; }
+  .lb-table tr:nth-child(odd) td { background: rgba(124,58,237,0.05); }
+
+  /* ARCADE BUTTON */
+  .btn-arcade {
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(0.48rem, 1.4vw, 0.7rem);
+    background: #7c3aed;
+    color: #fff;
+    border: none;
+    padding: 0.7rem 1.4rem;
+    cursor: pointer;
+    box-shadow: 4px 4px 0 #3b1f7a;
+    letter-spacing: 0.05em;
+    transition: transform 0.1s, box-shadow 0.1s;
+    flex-shrink: 0;
+  }
+
+  .btn-arcade:hover  { background: #6d28d9; }
+  .btn-arcade:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 #3b1f7a; }
+
+  /* CONTROLS HINT */
+  .controls-hint {
+    font-size: 0.44rem;
+    color: #e0e0ff;
+    text-align: center;
+    margin: 0.55rem 0 0.3rem;
+    letter-spacing: 0.06em;
+    line-height: 2;
+    text-shadow: 0 0 8px rgba(167,139,250,0.4);
+  }
+
+  /* TOUCH CONTROLS */
+  .mobile-touch-controls {
+    display: none;
+    gap: 1rem;
+    margin: 0.4rem 0;
+    justify-content: center;
+  }
+
+  .touch-btn {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.8rem;
+    background: #1e1040;
+    color: #a78bfa;
+    border: 2px solid #7c3aed;
+    width: 56px;
+    height: 56px;
+    cursor: pointer;
+    border-radius: 4px;
+    box-shadow: 3px 3px 0 #3b1f7a;
+    transition: background 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .touch-btn:active { background: #3b1f7a; }
+
+  @media (max-width: 640px) {
+    .mobile-touch-controls { display: flex; }
+  }
+
+  /* GLOBAL RANKING */
+  .global-ranking {
+    width: min(600px, 96vw);
+    margin: 1.2rem auto 2rem;
+    font-family: 'Press Start 2P', monospace;
+  }
+
+  .gr-title {
+    font-size: 0.5rem;
+    color: #22d3ee;
+    text-align: center;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.6rem;
+    text-shadow: 0 0 10px rgba(34,211,238,0.4);
+  }
+
+  .gr-status {
+    font-size: 0.38rem;
+    color: #4b5563;
+    text-align: center;
+    letter-spacing: 0.06em;
+    padding: 0.5rem 0;
+  }
+
+  .gr-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.46rem;
+    color: #ffffff;
+  }
+
+  .gr-table th {
+    color: #a78bfa;
+    padding: 0.2rem 0.5rem;
+    text-align: left;
+    border-bottom: 1px solid #2d1f50;
+    letter-spacing: 0.05em;
+  }
+
+  .gr-table td { padding: 0.18rem 0.5rem; color: #ffffff; }
+  .gr-table tr.gr-current td { color: #22d3ee; }
+  .gr-table tr:nth-child(odd) td { background: rgba(124,58,237,0.05); }
+
+  /* STARS */
+  .stars {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  .stars::before, .stars::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 10% 20%, #fff 0%, transparent 100%),
+      radial-gradient(1px 1px at 30% 80%, #fff 0%, transparent 100%),
+      radial-gradient(1px 1px at 50% 40%, #fff 0%, transparent 100%),
+      radial-gradient(1px 1px at 70% 10%, #fff 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 60%, #fff 0%, transparent 100%),
+      radial-gradient(1px 1px at 15% 55%, #fff 0%, transparent 100%),
+      radial-gradient(1px 1px at 45% 70%, #fff 0%, transparent 100%),
+      radial-gradient(1px 1px at 80% 30%, #fff 0%, transparent 100%),
+      radial-gradient(1px 1px at 25% 90%, #fff 0%, transparent 100%),
+      radial-gradient(1px 1px at 60%  5%, #fff 0%, transparent 100%);
+    opacity: 0.35;
+  }
+
+  .stars::after {
+    opacity: 0.18;
+    background-image:
+      radial-gradient(1px 1px at  5% 45%, #a78bfa 0%, transparent 100%),
+      radial-gradient(1px 1px at 35% 25%, #a78bfa 0%, transparent 100%),
+      radial-gradient(1px 1px at 65% 75%, #22d3ee 0%, transparent 100%),
+      radial-gradient(1px 1px at 85% 50%, #22d3ee 0%, transparent 100%),
+      radial-gradient(1px 1px at 55% 85%, #a78bfa 0%, transparent 100%);
+  }
+</style>
+</head>
+<body>
+
+<div class="stars"></div>
+
+<!-- NAV -->
+<nav class="top-nav">
+  <a href="index.html">← Home</a>
+</nav>
+
+<!-- LOGO -->
+<div class="game-header">
+  <div class="pixel-logo">NANO<span>INVADERS</span></div>
+  <div class="tagline">QA VS THE BUGS — DEFEND THE CODEBASE</div>
+</div>
+
+<!-- HUD -->
+<div class="hud">
+  <span>SCORE: <span id="scoreDisplay">0</span></span>
+  <span>LEVEL: <span id="levelDisplay">1</span></span>
+  <span>LIVES: <span id="livesDisplay">❤️❤️❤️</span></span>
+</div>
+
+<!-- CANVAS -->
+<div class="canvas-wrap">
+  <canvas id="gameCanvas" width="600" height="460"></canvas>
+
+  <!-- START OVERLAY -->
+  <div class="overlay" id="startOverlay">
+    <h2>NANO<br>INVADERS</h2>
+    <p>YOU ARE THE QA.<br>DESTROY THE BUGS.<br>← → MOVE &nbsp;|&nbsp; SPACE FIRE</p>
+    <div class="name-wrap">
+      <span class="name-label">ENTER YOUR NAME</span>
+      <input type="text" id="playerName" class="name-input" maxlength="12" placeholder="NANO" autocomplete="off" spellcheck="false"/>
+    </div>
+    <button class="btn-arcade" id="startBtn">▶ START</button>
+  </div>
+
+  <!-- GAMEOVER OVERLAY -->
+  <div class="overlay" id="gameoverOverlay" style="display:none;">
+    <h2 id="gameoverTitle">GAME OVER</h2>
+    <p id="gameoverMsg">BUGS REACHED THE CODE.</p>
+    <p style="color:#22d3ee;">SCORE: <span id="finalScore">0</span></p>
+    <div class="lb-wrap">
+      <div class="lb-title">— TOP SCORES —</div>
+      <table class="lb-table">
+        <thead><tr><th>#</th><th>NAME</th><th>SCORE</th><th>LVL</th></tr></thead>
+        <tbody id="lbBody"></tbody>
+      </table>
+    </div>
+    <button class="btn-arcade" id="restartBtn">↺ PLAY AGAIN</button>
+  </div>
+</div>
+
+<!-- CONTROLS -->
+<p class="controls-hint">← → MOVE &nbsp;|&nbsp; SPACE FIRE &nbsp;|&nbsp; MOBILE: BUTTONS BELOW</p>
+
+<!-- TOUCH CONTROLS -->
+<div class="mobile-touch-controls">
+  <button class="touch-btn" id="touchLeft">◄</button>
+  <button class="touch-btn" id="touchFire">■</button>
+  <button class="touch-btn" id="touchRight">►</button>
+</div>
+
+<!-- GLOBAL RANKING -->
+<div class="global-ranking" id="globalRanking">
+  <div class="gr-title">— GLOBAL RANKING —</div>
+  <div class="gr-status" id="grStatus">LOADING...</div>
+  <table class="gr-table" id="grTable" style="display:none;">
+    <thead><tr><th>#</th><th>NAME</th><th>SCORE</th><th>DATE</th></tr></thead>
+    <tbody id="grBody"></tbody>
+  </table>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  // ── CANVAS ────────────────────────────────────────────────
+  const canvas = document.getElementById('gameCanvas');
+  const ctx    = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+
+  // ── AUDIO ─────────────────────────────────────────────────
+  let audioCtx = null;
+
+  function getACtx() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    return audioCtx;
+  }
+
+  function tone(freq, type, dur, vol, freqEnd) {
+    try {
+      const ac = getACtx();
+      const osc = ac.createOscillator();
+      const gain = ac.createGain();
+      osc.connect(gain);
+      gain.connect(ac.destination);
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, ac.currentTime);
+      if (freqEnd != null) osc.frequency.exponentialRampToValueAtTime(freqEnd, ac.currentTime + dur);
+      gain.gain.setValueAtTime(vol, ac.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + dur);
+      osc.start(ac.currentTime);
+      osc.stop(ac.currentTime + dur);
+    } catch(e) {}
+  }
+
+  const sfx = {
+    shoot:    () => tone(660, 'square', 0.07, 0.18, 330),
+    kill:     () => { tone(440,'square',0.05,0.25); setTimeout(()=>tone(220,'square',0.08,0.2),55); setTimeout(()=>tone(110,'sawtooth',0.1,0.15),120); },
+    hit:      () => tone(80, 'sawtooth', 0.25, 0.35, 40),
+    levelUp:  () => [523,659,784,1047].forEach((f,i)=>setTimeout(()=>tone(f,'square',0.1,0.22),i*90)),
+    gameOver: () => [440,330,220,110].forEach((f,i)=>setTimeout(()=>tone(f,'sawtooth',0.18,0.28),i*180)),
+  };
+
+  // ── JSONBIN ───────────────────────────────────────────────
+  const JB_URL = 'https://api.jsonbin.io/v3/b/69cf2aedaaba882197bd963f';
+  const JB_KEY = '$2a$10$V/WkLiRZduyU3.eqNF73b.vqmiHXuOHcam24/oYg5ftIEUTkaG0Ym';
+  const JB_MAX = 20;
+
+  async function jbGet() {
+    const res = await fetch(JB_URL, { headers: { 'X-Master-Key': JB_KEY } });
+    if (!res.ok) throw new Error('GET ' + res.status);
+    const data = await res.json();
+    return Array.isArray(data.record?.scores) ? data.record.scores : [];
+  }
+
+  async function jbPut(scores) {
+    const res = await fetch(JB_URL, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-Master-Key': JB_KEY },
+      body: JSON.stringify({ scores })
+    });
+    if (!res.ok) throw new Error('PUT ' + res.status);
+  }
+
+  async function submitScore(name, scoreVal, date) {
+    try {
+      const scores = await jbGet();
+      // Unique name: one entry per player, keep best score
+      const idx = scores.findIndex(s => s.name.toUpperCase() === name.toUpperCase());
+      if (idx !== -1 && scoreVal <= scores[idx].score) {
+        // existing record is better: skip PUT, just render current ranking
+        renderOverlayLb(scores, scores[idx].name, scores[idx].score);
+        renderGlobalRanking(scores, scores[idx].name, scores[idx].score);
+        return;
+      }
+      if (idx !== -1) scores.splice(idx, 1);
+      scores.push({ name, score: scoreVal, date });
+      scores.sort((a, b) => b.score - a.score);
+      if (scores.length > JB_MAX) scores.splice(JB_MAX);
+      await jbPut(scores);
+      renderOverlayLb(scores, name, scoreVal);
+      renderGlobalRanking(scores, name, scoreVal);
+    } catch(e) {
+      document.getElementById('grStatus').textContent = 'OFFLINE — CONNECTION ERROR';
+      document.getElementById('lbBody').innerHTML = '<tr><td colspan="4" style="text-align:center;color:#ef4444;padding:.4rem">CONNECTION ERROR</td></tr>';
+    }
+  }
+
+  async function loadGlobalRanking() {
+    try {
+      const scores = await jbGet();
+      renderGlobalRanking(scores, null, null);
+    } catch(e) {
+      document.getElementById('grStatus').textContent = 'OFFLINE — LOCAL SCORES ONLY';
+    }
+  }
+
+  function renderGlobalRanking(scores, currentName, currentScore) {
+    const status = document.getElementById('grStatus');
+    const table  = document.getElementById('grTable');
+    const tbody  = document.getElementById('grBody');
+    if (!scores || !scores.length) {
+      status.textContent = 'NO SCORES YET — BE THE FIRST!';
+      table.style.display = 'none';
+      return;
+    }
+    status.textContent = '';
+    table.style.display = 'table';
+    tbody.innerHTML = '';
+    scores.forEach((s, i) => {
+      const tr = document.createElement('tr');
+      if (currentName && s.name === currentName && s.score === currentScore) tr.className = 'gr-current';
+      tr.innerHTML = `<td>${i + 1}</td><td>${s.name || '???'}</td><td>${s.score}</td><td>${s.date || ''}</td>`;
+      tbody.appendChild(tr);
+    });
+  }
+
+  // ── OVERLAY LEADERBOARD (from API) ───────────────────────
+  function renderOverlayLb(scores, currentName, currentScore) {
+    const tbody = document.getElementById('lbBody');
+    tbody.innerHTML = '';
+    if (!scores || !scores.length) {
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#3b1f7a;padding:.3rem">— NO RECORDS —</td></tr>';
+      return;
+    }
+    scores.forEach((entry, i) => {
+      const tr = document.createElement('tr');
+      if (entry.name === currentName && entry.score === currentScore) tr.className = 'current-run';
+      tr.innerHTML = `<td>${i+1}</td><td>${entry.name || '???'}</td><td>${entry.score}</td><td>${entry.date || ''}</td>`;
+      tbody.appendChild(tr);
+    });
+  }
+
+  // ── CONFIG ────────────────────────────────────────────────
+  const PLAYER_SPEED   = 4;
+  const BULLET_SPEED   = 7;
+  const ENEMY_ROWS     = 4;
+  const ENEMY_COLS     = 10;
+  const ENEMY_W        = 44;
+  const ENEMY_H        = 32;
+  const ENEMY_PAD_X    = 6;
+  const ENEMY_PAD_Y    = 8;
+  const ENEMY_START_Y  = 50;
+  const PLAYER_W       = 50;
+  const PLAYER_H       = 36;
+  const BULLET_W       = 8;
+  const BULLET_H       = 14;
+  const SHOOT_COOLDOWN = 350;
+
+  const ENEMY_TYPES = [
+    { char: '🐛', color: '#ef4444' },
+    { char: '🐞', color: '#f97316' },
+    { char: '💀', color: '#a855f7' },
+    { char: '⚠️', color: '#eab308' },
+  ];
+
+  const PIXEL_FONT = "'Press Start 2P', monospace";
+
+  // ── STATE ─────────────────────────────────────────────────
+  let state, score, lives, level, enemies, bullets, enemyBullets,
+      player, keys, enemyDir, enemyMoveTimer, enemyMoveInterval,
+      lastShot, animFrame, enemyShootTimer, bitsToggle, playerName;
+
+  // ── INIT ──────────────────────────────────────────────────
+  function init() {
+    score  = 0;
+    lives  = 3;
+    level  = 1;
+    bitsToggle       = 0;
+    enemyDir         = 1;
+    enemyMoveInterval = 800;
+    enemyMoveTimer   = 0;
+    enemyShootTimer  = 0;
+    lastShot         = 0;
+    keys             = {};
+    player = { x: W/2 - PLAYER_W/2, y: H - PLAYER_H - 12, w: PLAYER_W, h: PLAYER_H };
+    bullets      = [];
+    enemyBullets = [];
+    enemies      = buildEnemies();
+    updateHUD();
+  }
+
+  function buildEnemies() {
+    const grid = [];
+    const totalW = ENEMY_COLS * (ENEMY_W + ENEMY_PAD_X) - ENEMY_PAD_X;
+    const startX = (W - totalW) / 2;
+    for (let r = 0; r < ENEMY_ROWS; r++)
+      for (let c = 0; c < ENEMY_COLS; c++)
+        grid.push({ x: startX + c*(ENEMY_W+ENEMY_PAD_X), y: ENEMY_START_Y + r*(ENEMY_H+ENEMY_PAD_Y), w: ENEMY_W, h: ENEMY_H, alive: true, type: ENEMY_TYPES[r % ENEMY_TYPES.length] });
+    return grid;
+  }
+
+  // ── DRAW ──────────────────────────────────────────────────
+  function drawBg() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.strokeStyle = 'rgba(124,58,237,0.06)';
+    ctx.lineWidth = 1;
+    for (let x = 0; x < W; x += 30) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+    for (let y = 0; y < H; y += 30) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+    ctx.strokeStyle = 'rgba(124,58,237,0.3)';
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(0,H-8); ctx.lineTo(W,H-8); ctx.stroke();
+  }
+
+  function drawPlayer() {
+    const { x: px, y: py, w: pw } = player;
+    ctx.shadowBlur = 12; ctx.shadowColor = '#7c3aed';
+    ctx.fillStyle = '#a78bfa';
+    ctx.fillRect(px+pw/2-3, py+22, 6, 14);
+    ctx.beginPath(); ctx.arc(px+pw/2, py+14, 13, 0, Math.PI*2);
+    ctx.fillStyle = '#1e1040'; ctx.fill();
+    ctx.strokeStyle = '#a78bfa'; ctx.lineWidth = 3; ctx.stroke();
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = '#22d3ee'; ctx.font = `bold 8px ${PIXEL_FONT}`;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('QA', px+pw/2, py+14);
+    ctx.shadowBlur = 8; ctx.shadowColor = '#7c3aed'; ctx.fillStyle = '#6d28d9';
+    ctx.beginPath(); ctx.moveTo(px+pw/2-13,py+22); ctx.lineTo(px+pw/2-24,py+32); ctx.lineTo(px+pw/2-5,py+28); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(px+pw/2+13,py+22); ctx.lineTo(px+pw/2+24,py+32); ctx.lineTo(px+pw/2+5,py+28);  ctx.closePath(); ctx.fill();
+    ctx.shadowBlur = 0; ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  }
+
+  function drawBullets() {
+    bullets.forEach(b => {
+      ctx.shadowBlur = 10; ctx.shadowColor = '#22d3ee'; ctx.fillStyle = '#22d3ee';
+      ctx.font = `bold 11px ${PIXEL_FONT}`; ctx.textAlign = 'center';
+      ctx.fillText(b.bit ? '1' : '0', b.x+BULLET_W/2, b.y);
+      ctx.shadowBlur = 0;
+    });
+    ctx.textAlign = 'left';
+  }
+
+  function drawEnemyBullets() {
+    enemyBullets.forEach(b => {
+      ctx.shadowBlur = 8; ctx.shadowColor = '#ef4444'; ctx.fillStyle = '#ef4444';
+      ctx.fillRect(b.x, b.y, 4, 10); ctx.shadowBlur = 0;
+    });
+  }
+
+  function drawEnemies() {
+    enemies.filter(e=>e.alive).forEach(e => {
+      ctx.font = `${ENEMY_H-8}px serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.shadowBlur = 8; ctx.shadowColor = e.type.color;
+      ctx.fillText(e.type.char, e.x+e.w/2, e.y+e.h/2);
+      ctx.shadowBlur = 0;
+    });
+    ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  }
+
+  // ── COLLISION ─────────────────────────────────────────────
+  function overlap(ax,ay,aw,ah,bx,by,bw,bh) {
+    return ax<bx+bw && ax+aw>bx && ay<by+bh && ay+ah>by;
+  }
+
+  // ── UPDATE ────────────────────────────────────────────────
+  let lastTime = 0;
+
+  function update(ts) {
+    const dt = ts - lastTime; lastTime = ts;
+    if (state !== 'playing') return;
+
+    if (keys['ArrowLeft']  || keys['touchLeft'])  player.x -= PLAYER_SPEED;
+    if (keys['ArrowRight'] || keys['touchRight']) player.x += PLAYER_SPEED;
+    player.x = Math.max(0, Math.min(W - player.w, player.x));
+
+    if ((keys[' '] || keys['touchFire']) && ts - lastShot > SHOOT_COOLDOWN) {
+      lastShot = ts; bitsToggle = 1 - bitsToggle;
+      bullets.push({ x: player.x+player.w/2-BULLET_W/2, y: player.y, bit: bitsToggle });
+      sfx.shoot();
+    }
+
+    bullets = bullets.filter(b => b.y > -BULLET_H);
+    bullets.forEach(b => b.y -= BULLET_SPEED);
+
+    enemyBullets = enemyBullets.filter(b => b.y < H);
+    enemyBullets.forEach(b => b.y += 4);
+
+    enemyMoveTimer += dt;
+    if (enemyMoveTimer >= enemyMoveInterval) { enemyMoveTimer = 0; moveEnemies(); }
+
+    enemyShootTimer += dt;
+    const shootInt = Math.max(600, 2000 - level * 200);
+    if (enemyShootTimer >= shootInt) {
+      enemyShootTimer = 0;
+      const alive = enemies.filter(e=>e.alive);
+      if (alive.length) {
+        const s = alive[Math.floor(Math.random()*alive.length)];
+        enemyBullets.push({ x: s.x+s.w/2-2, y: s.y+s.h });
+      }
+    }
+
+    bullets = bullets.filter(b => {
+      for (let e of enemies) {
+        if (!e.alive) continue;
+        if (overlap(b.x, b.y, BULLET_W, BULLET_H, e.x, e.y, e.w, e.h)) {
+          e.alive = false; score += 10 * level; updateHUD(); sfx.kill(); return false;
+        }
+      }
+      return true;
+    });
+
+    enemyBullets = enemyBullets.filter(b => {
+      if (overlap(b.x, b.y, 4, 10, player.x, player.y, player.w, player.h)) {
+        lives--; updateHUD(); sfx.hit();
+        if (lives <= 0) { gameOver(false); } return false;
+      }
+      return true;
+    });
+
+    const alive = enemies.filter(e=>e.alive);
+    if (alive.some(e => e.y+e.h >= H-8)) { gameOver(false); return; }
+
+    if (alive.length === 0) {
+      level++; enemyMoveInterval = Math.max(100, 800 - level*80);
+      enemies = buildEnemies(); bullets = []; enemyBullets = [];
+      updateHUD(); sfx.levelUp();
+    }
+  }
+
+  function moveEnemies() {
+    let hit = false;
+    enemies.forEach(e => {
+      if (!e.alive) return;
+      e.x += enemyDir * (18 + level*2);
+      if (e.x+e.w > W-4 || e.x < 4) hit = true;
+    });
+    if (hit) { enemyDir *= -1; enemies.forEach(e => { if (e.alive) e.y += 16; }); }
+  }
+
+  // ── GAME FLOW ─────────────────────────────────────────────
+  function startGame() {
+    playerName = (document.getElementById('playerName').value.trim().toUpperCase() || 'ANON').slice(0, 12);
+    try { localStorage.setItem('nanoinvaders_name', playerName); } catch(e) {}
+    document.getElementById('startOverlay').style.display = 'none';
+    document.getElementById('gameoverOverlay').style.display = 'none';
+    state = 'playing';
+    init();
+    lastTime = performance.now();
+    loop(lastTime);
+  }
+
+  function gameOver(won) {
+    state = 'over';
+    cancelAnimationFrame(animFrame);
+    if (!won) sfx.gameOver();
+    const today = new Date().toLocaleDateString('en-CA');
+    document.getElementById('gameoverTitle').textContent = won ? 'YOU WIN!' : 'GAME OVER';
+    document.getElementById('gameoverMsg').textContent   = won ? 'ALL BUGS ELIMINATED.' : 'BUGS REACHED THE CODE.';
+    document.getElementById('finalScore').textContent    = score;
+    document.getElementById('lbBody').innerHTML = '<tr><td colspan="4" style="text-align:center;color:#a78bfa;padding:.4rem;letter-spacing:.06em">SAVING...</td></tr>';
+    document.getElementById('gameoverOverlay').style.display = 'flex';
+    submitScore(playerName, score, today);
+  }
+
+  function loop(ts) {
+    update(ts);
+    drawBg(); drawEnemies(); drawBullets(); drawEnemyBullets(); drawPlayer();
+    animFrame = requestAnimationFrame(loop);
+  }
+
+  // ── HUD ───────────────────────────────────────────────────
+  function updateHUD() {
+    document.getElementById('scoreDisplay').textContent = score;
+    document.getElementById('levelDisplay').textContent = level;
+    document.getElementById('livesDisplay').textContent = '❤️'.repeat(Math.max(0, lives));
+  }
+
+  // ── INPUT ─────────────────────────────────────────────────
+  document.addEventListener('keydown', e => {
+    keys[e.key] = true;
+    if ([' ','ArrowLeft','ArrowRight'].includes(e.key)) e.preventDefault();
+  });
+  document.addEventListener('keyup', e => { keys[e.key] = false; });
+
+  function bindTouch(id, key) {
+    const btn = document.getElementById(id);
+    if (!btn) return;
+    btn.addEventListener('pointerdown', e => { e.preventDefault(); keys[key] = true; });
+    btn.addEventListener('pointerup',   e => { e.preventDefault(); keys[key] = false; });
+    btn.addEventListener('pointerleave',() => { keys[key] = false; });
+  }
+  bindTouch('touchLeft',  'touchLeft');
+  bindTouch('touchRight', 'touchRight');
+  bindTouch('touchFire',  'touchFire');
+
+  document.getElementById('startBtn').addEventListener('click', startGame);
+  document.getElementById('restartBtn').addEventListener('click', () => { cancelAnimationFrame(animFrame); startGame(); });
+
+  // Enter key in name input → start
+  document.getElementById('playerName').addEventListener('keydown', e => { if (e.key === 'Enter') startGame(); });
+
+  // Restore saved name
+  try {
+    const saved = localStorage.getItem('nanoinvaders_name');
+    if (saved) document.getElementById('playerName').value = saved;
+  } catch(e) {}
+
+  // ── BOOT ──────────────────────────────────────────────────
+  keys = {};
+  state = 'idle';
+  playerName = 'ANON';
+  loadGlobalRanking();
+
+})();
+</script>
+</body>
+</html>

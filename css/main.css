@@ -458,3 +458,51 @@ footer a:not(.nav-link) {
 .entry-title a {
   text-decoration: none;
 }
+
+/* ============================================================
+   Lab Dropdown
+   ============================================================ */
+
+/* Remove caret */
+.lab-nav-link::after {
+  display: none;
+}
+
+/* Align left edge of dropdown with left edge of trigger ("Laboratory") */
+.lab-dd-menu {
+  left: 0;
+  right: auto;
+  transform: none;
+  margin-top: 0.4rem;
+  min-width: 160px;
+  border-radius: 6px;
+  padding: 0.4rem 0;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+
+.lab-dd-menu .dropdown-item {
+  padding: 0.45rem 1.2rem;
+  font-size: 0.875rem;
+}
+
+/* ============================================================
+   Dropdown – Dark Mode Support
+   ============================================================ */
+[data-theme="dark"] .dropdown-menu {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+
+[data-theme="dark"] .dropdown-item {
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .dropdown-item:hover,
+[data-theme="dark"] .dropdown-item:focus {
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .dropdown-divider {
+  border-color: var(--border-color);
+}
