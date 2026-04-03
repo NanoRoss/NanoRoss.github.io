@@ -64,6 +64,7 @@
   const I18N = {
     es: {
       "nav.lab": "Laboratorio",
+      "lab.pqacman": "PQACMAN",
       "nav.about": "Acerca de",
       "nav.skills": "Habilidades",
       "nav.courses": "Cursos y Certificaciones",
