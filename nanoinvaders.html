@@ -87,6 +87,9 @@
     width: min(600px, 96vw);
     height: auto;
     cursor: none;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
   }
 
   .canvas-wrap {
@@ -227,9 +230,11 @@
   /* TOUCH CONTROLS */
   .mobile-touch-controls {
     display: none;
-    gap: 1rem;
-    margin: 0.4rem 0;
+    gap: 1.2rem;
+    margin: 0.6rem 0;
     justify-content: center;
+    user-select: none;
+    -webkit-user-select: none;
   }
 
   .touch-btn {
@@ -238,18 +243,25 @@
     background: #1e1040;
     color: #a78bfa;
     border: 2px solid #7c3aed;
-    width: 56px;
-    height: 56px;
+    width: 64px;
+    height: 64px;
     cursor: pointer;
     border-radius: 4px;
     box-shadow: 3px 3px 0 #3b1f7a;
-    transition: background 0.1s;
+    transition: background 0.08s;
     display: flex;
     align-items: center;
     justify-content: center;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    outline: none;
   }
 
-  .touch-btn:active { background: #3b1f7a; }
+  .touch-btn:active,
+  .touch-btn.pressed { background: #3b1f7a; box-shadow: 1px 1px 0 #3b1f7a; transform: translate(2px,2px); }
 
   @media (max-width: 640px) {
     .mobile-touch-controls { display: flex; }
@@ -452,7 +464,7 @@
 
   // ── JSONBIN ───────────────────────────────────────────────
   const JB_URL = 'https://api.jsonbin.io/v3/b/69cf2aedaaba882197bd963f';
-  const JB_KEY = '$2a$10$V/WkLiRZduyU3.eqNF73b.vqmiHXuOHcam24/oYg5ftIEUTkaG0Ym';
+  const JB_KEY = '$2a$10$V/WkLiRZduyU3.eqNF73b.vqmiHXuOHcam24/oYg5ftIEUTkaG0Ym'; // No te lo robes porfis
   const JB_MAX = 20;
 
   async function jbGet() {
@@ -541,8 +553,8 @@
   }
 
   // ── CONFIG ────────────────────────────────────────────────
-  const PLAYER_SPEED   = 4;
-  const BULLET_SPEED   = 7;
+  const PLAYER_SPEED   = 5;
+  const BULLET_SPEED   = 8;
   const ENEMY_ROWS     = 4;
   const ENEMY_COLS     = 10;
   const ENEMY_W        = 44;
@@ -688,7 +700,7 @@
     if (enemyMoveTimer >= enemyMoveInterval) { enemyMoveTimer = 0; moveEnemies(); }
 
     enemyShootTimer += dt;
-    const shootInt = Math.max(600, 2000 - level * 200);
+    const shootInt = Math.max(500, 1800 - level * 180);
     if (enemyShootTimer >= shootInt) {
       enemyShootTimer = 0;
       const alive = enemies.filter(e=>e.alive);
@@ -749,8 +761,7 @@
   }
 
   function gameOver(won) {
-    state = 'over';
-    cancelAnimationFrame(animFrame);
+    state = 'over'; // loop auto-stops via state check
     if (!won) sfx.gameOver();
     const today = new Date().toLocaleDateString('en-CA');
     document.getElementById('gameoverTitle').textContent = won ? 'YOU WIN!' : 'GAME OVER';
@@ -764,7 +775,7 @@
   function loop(ts) {
     update(ts);
     drawBg(); drawEnemies(); drawBullets(); drawEnemyBullets(); drawPlayer();
-    animFrame = requestAnimationFrame(loop);
+    if (state === 'playing') animFrame = requestAnimationFrame(loop);
   }
 
   // ── HUD ───────────────────────────────────────────────────
@@ -784,9 +795,13 @@
   function bindTouch(id, key) {
     const btn = document.getElementById(id);
     if (!btn) return;
-    btn.addEventListener('pointerdown', e => { e.preventDefault(); keys[key] = true; });
-    btn.addEventListener('pointerup',   e => { e.preventDefault(); keys[key] = false; });
-    btn.addEventListener('pointerleave',() => { keys[key] = false; });
+    const press = e => { e.preventDefault(); keys[key] = true;  btn.classList.add('pressed'); };
+    const release = e => { e.preventDefault(); keys[key] = false; btn.classList.remove('pressed'); };
+    btn.addEventListener('pointerdown',   press);
+    btn.addEventListener('pointerup',     release);
+    btn.addEventListener('pointerleave',  release);
+    btn.addEventListener('pointercancel', release);
+    btn.addEventListener('contextmenu',   e => e.preventDefault());
   }
   bindTouch('touchLeft',  'touchLeft');
   bindTouch('touchRight', 'touchRight');
