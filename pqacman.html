@@ -54,9 +54,12 @@
     /* ── Header ── */
     .game-header { position: relative; z-index: 10; text-align: center; padding: 16px 12px 6px; }
     .pixel-logo { font-size: clamp(1.2rem, 5vw, 1.8rem); letter-spacing: .05em; }
-    .pixel-logo .pq  { color: var(--primary); text-shadow: 0 0 12px var(--primary); }
-    .pixel-logo .ac  { color: var(--accent);  text-shadow: 0 0 12px var(--accent); }
-    .pixel-logo .man { color: var(--red);     text-shadow: 0 0 12px var(--red); }
+    .pixel-logo .l-p { color: #3fb950; text-shadow: 0 0 12px #3fb950; }
+    .pixel-logo .l-qa{ color: #d29922; text-shadow: 0 0 14px #d29922; }
+    .pixel-logo .l-c { color: #f85149; text-shadow: 0 0 12px #f85149; }
+    .pixel-logo .l-m { color: #388bfd; text-shadow: 0 0 12px #388bfd; }
+    .pixel-logo .l-a2{ color: #3fb950; text-shadow: 0 0 12px #3fb950; }
+    .pixel-logo .l-n { color: #f85149; text-shadow: 0 0 12px #f85149; }
     .tagline { color: var(--muted); font-size: .4rem; margin-top: 6px; letter-spacing: .08em; }
 
     /* ── HUD ── */
@@ -157,8 +160,18 @@
       text-shadow: 0 0 8px rgba(63,185,80,.4);
       text-align: center; margin-bottom: 14px; letter-spacing: .08em;
     }
+    .hs-table-wrap {
+      max-height: 260px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--primary) var(--border);
+    }
+    .hs-table-wrap::-webkit-scrollbar { width: 5px; }
+    .hs-table-wrap::-webkit-scrollbar-track { background: var(--border); border-radius: 3px; }
+    .hs-table-wrap::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 3px; }
     .hs-table { width: 100%; border-collapse: collapse; font-size: .34rem; }
-    .hs-table th {
+    .hs-table thead th {
+      position: sticky; top: 0; background: var(--card-bg); z-index: 1;
       color: var(--muted); padding: 5px 8px;
       border-bottom: 1px solid var(--border);
       font-size: .3rem; letter-spacing: .05em; text-align: center;
@@ -186,7 +199,7 @@
 
   <div class="game-header">
     <div class="pixel-logo">
-      <span class="pq">PQ</span><span class="ac">AC</span><span class="man">MAN</span>
+      <span class="l-p">P</span><span class="l-qa">QA</span><span class="l-c">C</span><span class="l-m">M</span><span class="l-a2">A</span><span class="l-n">N</span>
     </div>
     <div class="tagline">QA TESTER VS THE BUG SWARM</div>
   </div>
@@ -204,7 +217,7 @@
     <!-- Start overlay -->
     <div class="overlay active" id="startOverlay">
       <div class="overlay-title">
-        <span style="color:#3fb950">PQ</span><span style="color:#d29922">AC</span><span style="color:#f85149">MAN</span>
+        <span style="color:#3fb950;text-shadow:0 0 12px #3fb950">P</span><span style="color:#d29922;text-shadow:0 0 14px #d29922">QA</span><span style="color:#f85149;text-shadow:0 0 12px #f85149">C</span><span style="color:#388bfd;text-shadow:0 0 12px #388bfd">M</span><span style="color:#3fb950;text-shadow:0 0 12px #3fb950">A</span><span style="color:#f85149;text-shadow:0 0 12px #f85149">N</span>
       </div>
       <div class="overlay-sub">
         COLLECT ALL DOTS TO ADVANCE<br>
@@ -230,7 +243,7 @@
       <div class="overlay-title" id="goTitle" style="color:#f85149">GAME OVER</div>
       <div class="overlay-score" id="goScore">SCORE: 0</div>
       <table class="lb-table">
-        <thead><tr><th>#</th><th>NAME</th><th>SCORE</th><th>LVL</th></tr></thead>
+        <thead><tr><th>#</th><th>NAME</th><th>SCORE</th><th>DATE</th></tr></thead>
         <tbody id="lbBody"></tbody>
       </table>
       <button class="btn-primary" id="restartBtn">&#8635; PLAY AGAIN</button>
@@ -249,15 +262,17 @@
     <div class="joystick-hint">DRAG TO MOVE</div>
   </div>
 
-  <!-- ④ High Scores section debajo del juego -->
+  <!-- ④ High Scores section a la derecha del juego -->
   <div class="highscores-section">
     <div class="hs-title">&#9312; HIGH SCORES</div>
-    <table class="hs-table">
-      <thead>
-        <tr><th>RANK</th><th>NAME</th><th>SCORE</th><th>LVL</th><th>DATE</th></tr>
-      </thead>
-      <tbody id="hsBody"></tbody>
-    </table>
+    <div class="hs-table-wrap">
+      <table class="hs-table">
+        <thead>
+          <tr><th>RANK</th><th>NAME</th><th>SCORE</th><th>DATE</th></tr>
+        </thead>
+        <tbody id="hsBody"></tbody>
+      </table>
+    </div>
   </div>
 
 <script>
@@ -643,49 +658,68 @@ function updateHUD() {
   if (PL.powerTimer>0) sEl.classList.add('power-active'); else sEl.classList.remove('power-active');
 }
 
-// ── Scores (localStorage) ─────────────────────────────────────────────────────
-// NOTE: Integrá aquí las dos APIs cuando tengas las URLs disponibles.
-// getScores() → reemplazar con GET a la API de consulta
-// saveScore()  → reemplazar con POST a la API de guardado
-const LS_KEY = 'pqacman_scores';
-function getScores() {
-  try { return JSON.parse(localStorage.getItem(LS_KEY)) || []; } catch { return []; }
+// ── Scores (JSONBin API) ──────────────────────────────────────────────────────
+const BIN_GET_URL = 'https://api.jsonbin.io/v3/b/69cf2aedaaba882197bd963f';
+const BIN_PUT_URL = 'https://api.jsonbin.io/v3/b/69cf2aedaaba882197bd963f';
+const BIN_KEY = '$2a$10$V/WkLiRZduyU3.eqNF73b.vqmiHXuOHcam24/oYg5ftIEUTkaG0Ym';
+
+async function getScores() {
+  try {
+    const r = await fetch(BIN_GET_URL, { headers: { 'X-Master-Key': BIN_KEY } });
+    const data = await r.json();
+    return data.record?.scores || [];
+  } catch { return []; }
 }
-function saveScore(name, s, l) {
-  const arr = getScores();
-  arr.push({ name: name||'ANON', score:s, level:l, date: new Date().toLocaleDateString('en-CA') });
+
+async function saveScore(name, s) {
+  const cleanName = (name || 'ANON').trim();
+  const date = new Date().toLocaleDateString('en-CA');
+  const arr = await getScores();
+  const existing = arr.findIndex(e => e.name.trim().toLowerCase() === cleanName.toLowerCase());
+  if (existing === -1) {
+    arr.push({ name: cleanName, score: s, date });
+  } else if (s > arr[existing].score) {
+    arr[existing] = { name: cleanName, score: s, date };
+  } else {
+    return;
+  }
   arr.sort((a,b) => b.score - a.score);
-  arr.splice(5);
-  try { localStorage.setItem(LS_KEY, JSON.stringify(arr)); } catch(e) {}
+  arr.splice(50);
+  await fetch(BIN_PUT_URL, {
+    method: 'PUT',
+    headers: { 'X-Master-Key': BIN_KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ scores: arr })
+  });
 }
 
 // In-overlay leaderboard (game over)
-function renderLB() {
-  const sc=getScores(), tb=document.getElementById('lbBody');
+async function renderLB() {
+  const sc = (await getScores()).sort((a,b) => b.score - a.score);
+  const tb = document.getElementById('lbBody');
   tb.innerHTML='';
   if (!sc.length) { tb.innerHTML='<tr><td colspan="4" style="color:#7d8590">NO SCORES YET</td></tr>'; return; }
   sc.forEach((s,i) => {
     const tr=document.createElement('tr');
     const name = String(s.name).replace(/[<>&"]/g,'');
-    tr.innerHTML=`<td>${i+1}</td><td>${name}</td><td>${s.score}</td><td>${s.level}</td>`;
+    tr.innerHTML=`<td>${i+1}</td><td>${name}</td><td>${s.score}</td><td style="font-size:.7em">${s.date||''}</td>`;
     tb.appendChild(tr);
   });
 }
 
 // Below-game high scores table (always visible, sorted mayor → menor)
-function renderHighScores() {
-  const scores = getScores(); // already sorted by saveScore
+async function renderHighScores() {
+  const scores = (await getScores()).sort((a,b) => b.score - a.score);
   const tbody  = document.getElementById('hsBody');
   if (!tbody) return;
   tbody.innerHTML = '';
   if (!scores.length) {
-    tbody.innerHTML = '<tr><td colspan="5" class="hs-empty">Play your first game to set a record!</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="4" class="hs-empty">Play your first game to set a record!</td></tr>';
     return;
   }
   scores.forEach((s,i) => {
     const tr = document.createElement('tr');
     const name = String(s.name).replace(/[<>&"]/g,'');
-    tr.innerHTML = `<td>${i+1}</td><td>${name}</td><td>${s.score}</td><td>${s.level}</td><td style="font-size:.27rem">${s.date}</td>`;
+    tr.innerHTML = `<td>${i+1}</td><td>${name}</td><td>${s.score}</td><td style="font-size:.27rem">${s.date||''}</td>`;
     tbody.appendChild(tr);
   });
 }
@@ -708,15 +742,15 @@ function triggerTransition() {
   showOverlay('levelOverlay');
   spawn(W/2,H/2,30,'#3fb950'); spawn(W/2,H/2,20,'#d29922');
 }
-function triggerGameOver(win) {
+async function triggerGameOver(win) {
   state='GAMEOVER'; sirenStop(); sfx.gameOver();
   highScore=Math.max(highScore,score);
   document.getElementById('goTitle').textContent=win?'STAGE CLEAR!':'GAME OVER';
   document.getElementById('goTitle').style.color=win?'#3fb950':'#f85149';
   document.getElementById('goScore').textContent='SCORE: '+score;
-  saveScore(playerName,score,level);
-  renderLB();
-  renderHighScores(); // actualiza tabla exterior
+  await saveScore(playerName, score);
+  await renderLB();
+  await renderHighScores(); // actualiza tabla exterior
   setTimeout(()=>showOverlay('gameoverOverlay'),1100);
 }
 
@@ -1113,8 +1147,14 @@ function applyJoystick(touch) {
 
 // ── Buttons ───────────────────────────────────────────────────────────────────
 document.getElementById('startBtn').addEventListener('click', () => {
+  if (!nameInput.value.trim()) {
+    nameInput.style.borderColor = 'var(--red)';
+    nameInput.focus();
+    return;
+  }
+  nameInput.style.borderColor = '';
   try{ac();}catch(e){}
-  playerName = (nameInput.value.trim().toUpperCase() || 'PLAYER');
+  playerName = nameInput.value.trim().toUpperCase();
   score=0; setupLevel(1,false); state='PLAYING'; hideOverlays(); updateHUD(); sirenStart(1);
 });
 document.getElementById('restartBtn').addEventListener('click', () => {
@@ -1123,13 +1163,29 @@ document.getElementById('restartBtn').addEventListener('click', () => {
 });
 
 // ── Init ──────────────────────────────────────────────────────────────────────
-function init() {
-  const sc=getScores();
-  highScore=sc.length ? sc[0].score : 0;
+async function init() {
+  const startBtn = document.getElementById('startBtn');
+  startBtn.disabled = true;
+  startBtn.style.opacity = '0.4';
+  startBtn.style.cursor = 'not-allowed';
+  startBtn.textContent = 'LOADING...';
+
+  document.getElementById('startHiScore').textContent='HI-SCORE: ...';
+  const tbody = document.getElementById('hsBody');
+  if (tbody) tbody.innerHTML='<tr><td colspan="4" class="hs-empty" style="color:#3fb950;letter-spacing:.1em">LOADING...</td></tr>';
+
+  const sc = await getScores();
+  highScore = sc.length ? Math.max(...sc.map(e => e.score)) : 0;
   document.getElementById('startHiScore').textContent='HI-SCORE: '+highScore;
   document.getElementById('hiDisplay').textContent=highScore;
   maze=parseMaze();
-  renderHighScores();
+  await renderHighScores();
+
+  startBtn.disabled = false;
+  startBtn.style.opacity = '';
+  startBtn.style.cursor = '';
+  startBtn.innerHTML = '&#9654; START';
+
   showOverlay('startOverlay');
   requestAnimationFrame(loop);
 }
