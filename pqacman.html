@@ -60,16 +60,17 @@
     .pixel-logo .l-m { color: #388bfd; text-shadow: 0 0 12px #388bfd; }
     .pixel-logo .l-a2{ color: #3fb950; text-shadow: 0 0 12px #3fb950; }
     .pixel-logo .l-n { color: #f85149; text-shadow: 0 0 12px #f85149; }
-    .tagline { color: var(--muted); font-size: .4rem; margin-top: 6px; letter-spacing: .08em; }
+    .tagline { color: var(--muted); font-size: .44rem; margin-top: 6px; letter-spacing: .08em; }
+    .game-legend { color: var(--accent); font-size: 1.14rem; margin-top: 8px; letter-spacing: .07em; opacity: .85; }
 
     /* ── HUD ── */
     .hud {
       position: relative; z-index: 10; width: min(560px, 96vw);
       display: flex; justify-content: space-between; align-items: center;
-      padding: 7px 4px; font-size: .46rem; flex-wrap: wrap; gap: 4px;
+      padding: 9px 6px; font-size: .54rem; flex-wrap: wrap; gap: 6px;
     }
     .hud .hi { color: var(--accent); text-shadow: 0 0 6px var(--accent); }
-    #livesDisplay { font-size: .7rem; }
+    #livesDisplay { font-size: .82rem; }
 
     /* ── Canvas ── */
     .canvas-wrap {
@@ -87,31 +88,31 @@
       background: rgba(13,17,23,.93); padding: 22px; gap: 13px; text-align: center;
     }
     .overlay.active { display: flex; }
-    .overlay-title { font-size: clamp(.85rem, 4vw, 1.25rem); line-height: 1.5; }
-    .overlay-sub   { font-size: .4rem; color: var(--muted); letter-spacing: .06em; line-height: 2; max-width: 360px; }
-    .overlay-score { font-size: .6rem; color: var(--accent); text-shadow: 0 0 10px var(--accent); }
+    .overlay-title { font-size: clamp(1rem, 4.5vw, 1.45rem); line-height: 1.5; }
+    .overlay-sub   { font-size: .46rem; color: var(--muted); letter-spacing: .06em; line-height: 2.1; max-width: 380px; }
+    .overlay-score { font-size: .72rem; color: var(--accent); text-shadow: 0 0 10px var(--accent); }
 
     .name-input {
       background: #0d1117; border: 1px solid var(--border); border-radius: 6px;
-      color: var(--text); font-family: 'Press Start 2P', monospace; font-size: .52rem;
-      padding: 10px 14px; width: 220px; text-align: center; outline: none;
+      color: var(--text); font-family: 'Press Start 2P', monospace; font-size: .62rem;
+      padding: 12px 16px; width: 240px; text-align: center; outline: none;
       transition: border-color .2s, box-shadow .2s;
     }
     .name-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(63,185,80,.2); }
 
     .btn-primary {
       background: var(--primary); border: none; border-radius: 6px;
-      color: #0d1117; font-family: 'Press Start 2P', monospace; font-size: .56rem;
-      padding: 11px 24px; cursor: pointer; letter-spacing: .04em; font-weight: bold;
+      color: #0d1117; font-family: 'Press Start 2P', monospace; font-size: .64rem;
+      padding: 13px 28px; cursor: pointer; letter-spacing: .04em; font-weight: bold;
       transition: box-shadow .15s, transform .1s, background .15s;
     }
     .btn-primary:hover { box-shadow: 0 0 22px rgba(63,185,80,.5); transform: translateY(-1px); background: #4fc361; }
     .btn-primary:active { transform: translateY(1px); }
 
     /* Overlay leaderboard */
-    .lb-table { width: 100%; max-width: 300px; border-collapse: collapse; font-size: .32rem; }
-    .lb-table th { color: var(--primary); padding: 4px 8px; border-bottom: 1px solid var(--border); }
-    .lb-table td { padding: 4px 8px; text-align: center; color: var(--text); }
+    .lb-table { width: 100%; max-width: 320px; border-collapse: collapse; font-size: .38rem; }
+    .lb-table th { color: var(--primary); padding: 5px 10px; border-bottom: 1px solid var(--border); font-size: .34rem; }
+    .lb-table td { padding: 5px 10px; text-align: center; color: var(--text); }
     .lb-table tbody tr:first-child td { color: var(--accent); text-shadow: 0 0 6px rgba(210,153,34,.5); }
 
     /* ── Controls hint ── */
@@ -156,9 +157,9 @@
       margin-top: 14px; margin-bottom: 28px;
     }
     .hs-title {
-      font-size: .55rem; color: var(--primary);
+      font-size: .65rem; color: var(--primary);
       text-shadow: 0 0 8px rgba(63,185,80,.4);
-      text-align: center; margin-bottom: 14px; letter-spacing: .08em;
+      text-align: center; margin-bottom: 16px; letter-spacing: .08em;
     }
     .hs-table-wrap {
       max-height: 260px;
@@ -169,14 +170,14 @@
     .hs-table-wrap::-webkit-scrollbar { width: 5px; }
     .hs-table-wrap::-webkit-scrollbar-track { background: var(--border); border-radius: 3px; }
     .hs-table-wrap::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 3px; }
-    .hs-table { width: 100%; border-collapse: collapse; font-size: .34rem; }
+    .hs-table { width: 100%; border-collapse: collapse; font-size: .4rem; }
     .hs-table thead th {
       position: sticky; top: 0; background: var(--card-bg); z-index: 1;
-      color: var(--muted); padding: 5px 8px;
+      color: var(--muted); padding: 7px 10px;
       border-bottom: 1px solid var(--border);
-      font-size: .3rem; letter-spacing: .05em; text-align: center;
+      font-size: .34rem; letter-spacing: .05em; text-align: center;
     }
-    .hs-table td { padding: 6px 8px; text-align: center; color: var(--text); }
+    .hs-table td { padding: 8px 10px; text-align: center; color: var(--text); }
     .hs-table tbody tr { border-bottom: 1px solid rgba(48,54,61,.5); }
     .hs-table tbody tr:last-child { border-bottom: none; }
     .hs-table tbody tr:first-child td { color: var(--accent); text-shadow: 0 0 6px rgba(210,153,34,.4); }
@@ -202,6 +203,7 @@
       <span class="l-p">P</span><span class="l-qa">QA</span><span class="l-c">C</span><span class="l-m">M</span><span class="l-a2">A</span><span class="l-n">N</span>
     </div>
     <div class="tagline">QA TESTER VS THE BUG SWARM</div>
+    <div class="game-legend">Evitá los bugs. Recolectá evidencia.</div>
   </div>
 
   <div class="hud">
@@ -224,7 +226,7 @@
         POWER-UPS LET YOU SQUASH BUGS<br>
         ARROWS / WASD &nbsp;&bull;&nbsp; P = PAUSE
       </div>
-      <div style="font-size:.37rem;color:#8b949e;letter-spacing:.06em">ENTER YOUR NAME</div>
+      <div style="font-size:.46rem;color:#8b949e;letter-spacing:.07em">ENTER YOUR NAME</div>
       <!-- ③ input sin placeholder -->
       <input class="name-input" id="playerName" type="text" maxlength="10" spellcheck="false" autocomplete="off">
       <div class="overlay-score" id="startHiScore">HI-SCORE: 0</div>
